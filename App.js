@@ -1,6 +1,18 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import * as firebase from 'firebase';
+
+const config = {
+  apiKey: "AIzaSyASYsh99Lfitc5LXME5538i7126HE4pjnU",
+  authDomain: "react-native-d21a0.firebaseapp.com",
+  databaseURL: "https://react-native-d21a0.firebaseio.com",
+  projectId: "react-native-d21a0",
+  storageBucket: "",
+  messagingSenderId: "157746092816"
+};
+firebase.initializeApp(config);
+
 export default class App extends React.Component {
   render() {
     return (
