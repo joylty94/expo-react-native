@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import Expo from 'expo';
 import * as firebase from 'firebase';
 
 const firebaseConfig = {
@@ -22,6 +23,15 @@ export default class App extends React.Component {
     this.state = ({
       email: '',
       password: ''
+    })
+  }
+
+  componentDidMount() {
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user != null){
+        console.log(user)
+      }
     })
   }
   
@@ -48,6 +58,37 @@ export default class App extends React.Component {
       console.log(error.toString());
     }
   }
+  loginWithFacebook = async () => {
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('2220221314881153', {
+      permissions: ['public_profile'],
+    });
+    if (type === 'success') {
+      
+      const credential = firebase.auth.logInWithReadPermissionsAsync.credential(token)
+
+      firebase.auth().signInWithCredential(credential).catch((error)=>{
+        console.log(error)
+      })
+    }
+  }
+
+  loginWithGoogle = async () => {
+    try {
+      const result = await Expo.Google.logInAsync({
+        androidClientId: '698587011968-v9vtjspk672bgsfp1nsf8bbqai4aneu2.apps.googleusercontent.com',
+        scopes: ['profile', 'email'],
+      });
+
+      if (result.type === 'success') {
+        console.log(result.accessToken);
+      } else {
+        console.log( cancelled )
+      }
+    } catch (e) {
+      console.log('error', e)
+    }
+  };
+
   render() {
     return (
       <Container>
@@ -84,6 +125,22 @@ export default class App extends React.Component {
             onPress={() => this.signUpUser(this.state.email, this.state.password)}
           >
             <Text style={{color: 'white'}}>Sign Up</Text>
+          </Button>
+          <Button style={{marginTop:10}}
+            full
+            rounded
+            primary
+            onPress={() => this.loginWithFacebook()}
+          >
+            <Text style={{color: 'white'}}>Login With FaceBook</Text>
+          </Button>
+          <Button style={{marginTop:10}}
+            full
+            rounded
+            primary
+            onPress={() => this.loginWithGoogle()}
+          >
+            <Text style={{color: 'white'}}>Login With Google</Text>
           </Button>
         </Form>
       </Container>
